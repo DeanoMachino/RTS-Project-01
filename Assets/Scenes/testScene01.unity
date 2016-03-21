@@ -113,7 +113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5214071a92541634395d81b322a001ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactionMode: 0
   tile: {fileID: 156970, guid: 35aeb676152aa9a469ce1ff47df98b82, type: 2}
+  wall: {fileID: 156970, guid: 2f83e7ee0505efb4697849f64a9b90f6, type: 2}
 --- !u!4 &93198654
 Transform:
   m_ObjectHideFlags: 0

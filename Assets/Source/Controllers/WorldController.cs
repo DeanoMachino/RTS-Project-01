@@ -1,7 +1,7 @@
 ﻿/// RTS-Project-01 -- Created by D. Sinclair, 2016
 /// ================
 /// WorldController.cs
-/// Class used to handle the world within the scene
+/// Class used to handle the world within the scene (a sort of game manager)
 
 using UnityEngine;
 using System.Collections;
@@ -11,8 +11,10 @@ public class WorldController : MonoBehaviour {
 
     public static WorldController Instance { get; protected set; }      // Static instance of the WorldController for accessing outwith the class
     public World world { get; protected set; }                          // The game world and world data
+    public InteractionMode interactionMode;                             // What mode of interaction the player is currently int
 
     public GameObject tile;     // TEMP
+    public GameObject wall;     // TEMP
     /// Constructors
 
     /// Methods
@@ -34,15 +36,22 @@ public class WorldController : MonoBehaviour {
             for (int y = 0; y < world.height; y++) {
                 // TEMP: Create tile GameObjects
                 GameObject tile_go = Instantiate(tile) as GameObject;
-                tile_go.transform.position = new Vector3(world.grid[x, y].position.x, 0, world.grid[x, y].position.y);
+                tile_go.transform.position = world.grid[x, y].positionV3;
             }
         }
 
+        interactionMode = InteractionMode.BuildMode;
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (Input.GetKey(KeyCode.Alpha1)) {
+            interactionMode = InteractionMode.BuildMode;
+        } else if (Input.GetKey(KeyCode.Alpha2)) {
+            interactionMode = InteractionMode.InteractMode;
+        }
 
         UpdateMouseRay();
 	
@@ -56,9 +65,24 @@ public class WorldController : MonoBehaviour {
             if (Input.GetMouseButton(0)) {
                 Debug.Log(hit.transform.position);
 
+                if (interactionMode == InteractionMode.BuildMode) {
+                    if (!world.grid[(int)hit.transform.position.x, (int)hit.transform.position.z].HasStatus(TileStatus.HasInstallation)) {
+                        world.grid[(int)hit.transform.position.x, (int)hit.transform.position.z].InstallObjectOnTile(wall);
+                    }
+                }
                 // TODO: Check what mode we are in, and whether to show context menu or ...
 
             }
         }
     }
+
+    void OnGUI() {
+
+        GUI.Label(new Rect(10.0f, 10.0f, 100.0f, 20.0f), interactionMode.ToString());
+    }
+}
+
+public enum InteractionMode {
+    BuildMode,
+    InteractMode
 }

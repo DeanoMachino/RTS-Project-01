@@ -9,8 +9,17 @@ using System.Collections.Generic;
 
 public class Tile {
     /// Variables
-    
-    public Vector2 position { get; protected set; }
+
+    public Vector2 positionV2 {
+        get;
+        protected set;
+    }
+
+    public Vector3 positionV3 {
+        get {
+            return new Vector3(positionV2.x, 0f, positionV2.y);
+        }
+    }
 
     private World world;
     private List<TileStatus> tileStatuses;
@@ -20,7 +29,7 @@ public class Tile {
     public Tile(World world_, Vector2 position_) {
         // Initialise tile attributes
         this.world = world_;
-        this.position = position_;
+        this.positionV2 = position_;
 
         // Create and empty tile status list
         tileStatuses = new List<TileStatus>();
@@ -28,10 +37,19 @@ public class Tile {
 
     /// Methods
 
+    public bool HasStatus(TileStatus status_) {
+        return tileStatuses.Contains(status_);
+    }
+
+    public void InstallObjectOnTile(GameObject go_) {
+        GameObject go = WorldController.Instantiate(go_);
+        go.GetComponent<InstalledObject>().Initialise(world, this);
+        tileStatuses.Add(TileStatus.HasInstallation);
+    }
 
 }
 
 public enum TileStatus {
     Empty,
-
+    HasInstallation
 }
