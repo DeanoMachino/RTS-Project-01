@@ -11,11 +11,6 @@ public class InstalledObject : MonoBehaviour {
     public World world { get; protected set; }
     public Tile tile { get; protected set; }
 
-
-    /// Constructors
-    
-
-
     /// Methods
 
     public void Initialise(World world_, Tile tile_) {
@@ -34,6 +29,10 @@ public class InstalledObject : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if(tile.changed){
+            if (tile.installedObjectType == ObjectType.None) {
+                Destroy(gameObject);
+            }
+        }
 	}
 }

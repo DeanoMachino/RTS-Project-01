@@ -11,7 +11,7 @@ GameObject:
   - 33: {fileID: 3340888}
   - 65: {fileID: 6513430}
   - 23: {fileID: 2374496}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,6 +106,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 09475fc889aaacd4f91a54cc7d54ab4b, type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 156970}

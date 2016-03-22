@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WorldController : MonoBehaviour {
     /// Variables
@@ -12,10 +13,10 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }      // Static instance of the WorldController for accessing outwith the class
     public World world { get; protected set; }                          // The game world and world data
     public InteractionMode interactionMode;                             // What mode of interaction the player is currently int
+    public List<Tile> changedTiles = new List<Tile>();                  // A list of the tiles which have had a change in the last frame
 
     public GameObject tile;     // TEMP
     public GameObject wall;     // TEMP
-    /// Constructors
 
     /// Methods
     
@@ -40,17 +41,23 @@ public class WorldController : MonoBehaviour {
             }
         }
 
-        interactionMode = InteractionMode.BuildMode;
+        interactionMode = InteractionMode.PlanningMode;
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+        foreach (Tile t in changedTiles) {
+            t.changed = false;
+        }
         if (Input.GetKey(KeyCode.Alpha1)) {
-            interactionMode = InteractionMode.BuildMode;
+            interactionMode = InteractionMode.PlanningMode;
         } else if (Input.GetKey(KeyCode.Alpha2)) {
+            interactionMode = InteractionMode.BuildMode;
+        } else if (Input.GetKey(KeyCode.Alpha3)) {
             interactionMode = InteractionMode.InteractMode;
+        } else if (Input.GetKey(KeyCode.Alpha4)) {
+            interactionMode = InteractionMode.InstallMode;
         }
 
         UpdateMouseRay();
@@ -60,29 +67,47 @@ public class WorldController : MonoBehaviour {
     void UpdateMouseRay() {
         RaycastHit hit;     // hit is the object which has been hit via the ray
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 100f)) {
+        int layermask = 1 << 8;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layermask)) {
             // If left mouse button has been pressed
-            if (Input.GetMouseButton(0)) {
-                Debug.Log(hit.transform.position);
+            if (Input.GetMouseButtonDown(0)) {
+                //Debug.Log(hit.transform.position);
 
-                if (interactionMode == InteractionMode.BuildMode) {
-                    if (!world.grid[(int)hit.transform.position.x, (int)hit.transform.position.z].HasStatus(TileStatus.HasInstallation)) {
-                        world.grid[(int)hit.transform.position.x, (int)hit.transform.position.z].InstallObjectOnTile(wall);
-                    }
+                Tile tile = GetWorldTile(hit.transform);
+
+                switch (interactionMode) {
+                    case InteractionMode.PlanningMode:
+                        tile.PlanObjectOnTile(ObjectType.Wall);
+                        break;
+                    case InteractionMode.BuildMode:
+                        tile.QueueObjectOnTile(ObjectType.Wall);
+                        break;
+                    case InteractionMode.InteractMode:
+                        // TODO: Show context menus with interaction options
+                        break;
+                    case InteractionMode.InstallMode:               // TEMP
+                        tile.InstallObjectOnTile(ObjectType.Wall);
+                        break;
+                    default:
+                        break;
                 }
-                // TODO: Check what mode we are in, and whether to show context menu or ...
-
             }
         }
     }
 
     void OnGUI() {
+        // TEMP -- Display text of current interaction mode
+        GUI.Label(new Rect(10.0f, 10.0f, 100.0f, 25.0f), interactionMode.ToString());
+    }
 
-        GUI.Label(new Rect(10.0f, 10.0f, 100.0f, 20.0f), interactionMode.ToString());
+    private Tile GetWorldTile(Transform transform_) {
+        return world.grid[(int)transform_.position.x, (int)transform_.position.z];
     }
 }
 
 public enum InteractionMode {
+    PlanningMode,
     BuildMode,
+    InstallMode,        // TEMP
     InteractMode
 }
