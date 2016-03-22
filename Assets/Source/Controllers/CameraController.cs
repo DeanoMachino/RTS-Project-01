@@ -12,9 +12,6 @@ public class CameraController : MonoBehaviour {
     public float panSpeed;
     public float zoomSpeed;
 
-    /// Constructors
-    
-
     /// Methods
 
 	// Use this for initialization
@@ -24,6 +21,8 @@ public class CameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        // TODO: Implement more sophisticated camera controls
 
         // Move camera
         Vector3 newPosition = Vector3.zero;
@@ -43,6 +42,8 @@ public class CameraController : MonoBehaviour {
         if (Input.GetKey(KeyCode.LeftShift)) {
             newPosition *= 2;
         }
+
+        // Zoom camera
         newPosition.y = -(Input.GetAxis("Mouse ScrollWheel") * zoomSpeed);
 
         Camera.main.transform.position += (newPosition * Time.deltaTime);

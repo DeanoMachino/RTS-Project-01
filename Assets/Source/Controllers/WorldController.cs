@@ -18,6 +18,8 @@ public class WorldController : MonoBehaviour {
     public GameObject tile;     // TEMP
     public GameObject wall;     // TEMP
 
+    private bool orthoCamera;
+
     /// Methods
     
 	// Use this for initialization
@@ -41,23 +43,36 @@ public class WorldController : MonoBehaviour {
             }
         }
 
+        orthoCamera = false;
+        Camera.main.orthographic = orthoCamera;
+
         interactionMode = InteractionMode.PlanningMode;
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+        // Update changed tiles
         foreach (Tile t in changedTiles) {
             t.changed = false;
         }
-        if (Input.GetKey(KeyCode.Alpha1)) {
+
+        // Change interaction mode
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
             interactionMode = InteractionMode.PlanningMode;
-        } else if (Input.GetKey(KeyCode.Alpha2)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             interactionMode = InteractionMode.BuildMode;
-        } else if (Input.GetKey(KeyCode.Alpha3)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             interactionMode = InteractionMode.InteractMode;
-        } else if (Input.GetKey(KeyCode.Alpha4)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
             interactionMode = InteractionMode.InstallMode;
+        }
+
+        // Change camera type
+        if (Input.GetKeyDown(KeyCode.Tab)) {
+            orthoCamera = !orthoCamera;
+            Camera.main.orthographic = orthoCamera;
         }
 
         UpdateMouseRay();
