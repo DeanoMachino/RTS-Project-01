@@ -6,6 +6,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class WorldController : MonoBehaviour {
     /// Variables
@@ -15,8 +16,12 @@ public class WorldController : MonoBehaviour {
     public InteractionMode interactionMode;                             // What mode of interaction the player is currently int
     public List<Tile> changedTiles = new List<Tile>();                  // A list of the tiles which have had a change in the last frame
 
-    public GameObject tile;     // TEMP
-    public GameObject wall;     // TEMP
+    private Tile hoveringTile;                                          // The tile which the mouse is currently hovering over
+    private List<GameObject> selectionObjects = new List<GameObject>(); // List of build indicator GameObjects
+
+    public GameObject tile;             // TEMP
+    public GameObject wall;             // TEMP
+    public GameObject buildIndicator;   // TEMP
 
     private bool orthoCamera;
 
@@ -51,7 +56,7 @@ public class WorldController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+    void Update() {
 
         // Update changed tiles
         foreach (Tile t in changedTiles) {
@@ -76,38 +81,110 @@ public class WorldController : MonoBehaviour {
         }
 
         UpdateMouseRay();
-	
-	}
+        if (interactionMode != InteractionMode.InteractMode) {
+            UpdateDragSelection();    // TODO: Check what type of object is being placed, and whether a perimeter or area drag should be used
+        }
+    }
 
     void UpdateMouseRay() {
         RaycastHit hit;     // hit is the object which has been hit via the ray
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layermask = 1 << 8;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, layermask)) {
-            // If left mouse button has been pressed
-            if (Input.GetMouseButtonDown(0)) {
-                //Debug.Log(hit.transform.position);
+            hoveringTile = GetWorldTile(hit.transform);
+        }
+    }
 
-                Tile tile = GetWorldTile(hit.transform);
+    void InteractWithTiles(Vector2 start_, Vector2 end_) {
 
-                switch (interactionMode) {
-                    case InteractionMode.PlanningMode:
-                        tile.PlanObjectOnTile(ObjectType.Wall);
-                        break;
-                    case InteractionMode.BuildMode:
-                        tile.QueueObjectOnTile(ObjectType.Wall);
-                        break;
-                    case InteractionMode.InteractMode:
-                        // TODO: Show context menus with interaction options
-                        break;
-                    case InteractionMode.InstallMode:               // TEMP
-                        tile.InstallObjectOnTile(ObjectType.Wall);
-                        break;
-                    default:
-                        break;
+        for (int x = (int)start_.x; x <= end_.x; x++) {
+            for (int y = (int)start_.y; y <= end_.y; y++) {
+                Tile tile = GetWorldTile(x, y);
+
+                if (tile != null) {
+                    switch (interactionMode) {
+                        case InteractionMode.PlanningMode:
+                            tile.PlanObjectOnTile(ObjectType.Wall);
+                            break;
+                        case InteractionMode.BuildMode:
+                            tile.QueueObjectOnTile(ObjectType.Wall);
+                            break;
+                        case InteractionMode.InteractMode:
+                            // NOTE: Should never get in here, due to earlier input validation
+                            // TODO: Show context menus with interaction options
+                            break;
+                        case InteractionMode.InstallMode:               // TEMP
+                            tile.InstallObjectOnTile(ObjectType.Wall);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
+    }
+
+    // MOVE
+    Vector2 dragStartPosition;
+    // /MOVE
+
+    void UpdateDragSelection() {
+        Vector2 currentPosition = hoveringTile.positionV2;
+
+        // Check if we're over a UI element
+        /*if (EventSystem.current.IsPointerOverGameObject()) {
+            return;
+        }*/
+
+        if (Input.GetMouseButtonDown(0)) {
+            // Set the start point of the drag
+            dragStartPosition = hoveringTile.positionV2;
+            Debug.Log(dragStartPosition.ToString());
+        }
+
+        Vector2 start = dragStartPosition;
+        Vector2 end = currentPosition;
+
+        // Swap values if dragging in the wrong direction
+        if (end.x < start.x) {
+            int temp = (int)end.x;
+            end.x = start.x;
+            start.x = temp;
+        }
+        if (end.y < start.y) {
+            int temp = (int)end.y;
+            end.y = start.y;
+            start.y = temp;
+        }
+
+        // Clean up old drag previews
+        while (selectionObjects.Count > 0) {
+            GameObject go = selectionObjects[0];
+            selectionObjects.RemoveAt(0);
+            Destroy(go);
+        }
+
+        if (Input.GetMouseButton(0)) {
+            // Display a drag preview
+            for (int x = (int)start.x; x <= end.x; x++) {
+                for (int y = (int)start.y; y <= end.y; y++) {
+                    Tile t = GetWorldTile(x, y);
+                    if (t != null) {
+                        // Display hint on tile
+                        GameObject go = Instantiate(buildIndicator);
+                        go.transform.position = new Vector3(x, 0f, y);
+                        go.transform.SetParent(this.transform, true);
+                        selectionObjects.Add(go);
+                    }
+                }
+            }
+        }
+
+        
+        if (Input.GetMouseButtonUp(0)) {
+            InteractWithTiles(start, end);
+        }
+
     }
 
     void OnGUI() {
@@ -117,6 +194,9 @@ public class WorldController : MonoBehaviour {
 
     private Tile GetWorldTile(Transform transform_) {
         return world.grid[(int)transform_.position.x, (int)transform_.position.z];
+    }
+    private Tile GetWorldTile(int x_, int y_) {
+        return world.grid[x_, y_];
     }
 }
 

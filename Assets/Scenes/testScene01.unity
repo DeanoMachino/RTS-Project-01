@@ -116,6 +116,7 @@ MonoBehaviour:
   interactionMode: 0
   tile: {fileID: 156970, guid: 35aeb676152aa9a469ce1ff47df98b82, type: 2}
   wall: {fileID: 156970, guid: 2f83e7ee0505efb4697849f64a9b90f6, type: 2}
+  buildIndicator: {fileID: 145178, guid: 465bcb6f2a658f7408c5451086157500, type: 2}
 --- !u!4 &93198654
 Transform:
   m_ObjectHideFlags: 0
@@ -221,7 +222,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 105191355}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071067}
+  m_LocalRotation: {x: 0.5735765, y: 0, z: 0, w: 0.819152}
   m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
