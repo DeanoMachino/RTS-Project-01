@@ -129,62 +129,63 @@ public class WorldController : MonoBehaviour {
     // /MOVE
 
     void UpdateDragSelection() {
-        Vector2 currentPosition = hoveringTile.positionV2;
+        if (hoveringTile != null) {
+            Vector2 currentPosition = hoveringTile.positionV2;
 
-        // Check if we're over a UI element
-        /*if (EventSystem.current.IsPointerOverGameObject()) {
-            return;
-        }*/
+            // Check if we're over a UI element
+            /*if (EventSystem.current.IsPointerOverGameObject()) {
+                return;
+            }*/
 
-        if (Input.GetMouseButtonDown(0)) {
-            // Set the start point of the drag
-            dragStartPosition = hoveringTile.positionV2;
-            Debug.Log(dragStartPosition.ToString());
-        }
+            if (Input.GetMouseButtonDown(0)) {
+                // Set the start point of the drag
+                dragStartPosition = hoveringTile.positionV2;
+                Debug.Log(dragStartPosition.ToString());
+            }
 
-        Vector2 start = dragStartPosition;
-        Vector2 end = currentPosition;
+            Vector2 start = dragStartPosition;
+            Vector2 end = currentPosition;
 
-        // Swap values if dragging in the wrong direction
-        if (end.x < start.x) {
-            int temp = (int)end.x;
-            end.x = start.x;
-            start.x = temp;
-        }
-        if (end.y < start.y) {
-            int temp = (int)end.y;
-            end.y = start.y;
-            start.y = temp;
-        }
+            // Swap values if dragging in the wrong direction
+            if (end.x < start.x) {
+                int temp = (int)end.x;
+                end.x = start.x;
+                start.x = temp;
+            }
+            if (end.y < start.y) {
+                int temp = (int)end.y;
+                end.y = start.y;
+                start.y = temp;
+            }
 
-        // Clean up old drag previews
-        while (selectionObjects.Count > 0) {
-            GameObject go = selectionObjects[0];
-            selectionObjects.RemoveAt(0);
-            Destroy(go);
-        }
+            // Clean up old drag previews
+            while (selectionObjects.Count > 0) {
+                GameObject go = selectionObjects[0];
+                selectionObjects.RemoveAt(0);
+                Destroy(go);
+            }
 
-        if (Input.GetMouseButton(0)) {
-            // Display a drag preview
-            for (int x = (int)start.x; x <= end.x; x++) {
-                for (int y = (int)start.y; y <= end.y; y++) {
-                    Tile t = GetWorldTile(x, y);
-                    if (t != null) {
-                        // Display hint on tile
-                        GameObject go = Instantiate(buildIndicator);
-                        go.transform.position = new Vector3(x, 0f, y);
-                        go.transform.SetParent(this.transform, true);
-                        selectionObjects.Add(go);
+            if (Input.GetMouseButton(0)) {
+                // Display a drag preview
+                for (int x = (int)start.x; x <= end.x; x++) {
+                    for (int y = (int)start.y; y <= end.y; y++) {
+                        Tile t = GetWorldTile(x, y);
+                        if (t != null) {
+                            // Display hint on tile
+                            GameObject go = Instantiate(buildIndicator);
+                            go.transform.position = new Vector3(x, 0f, y);
+                            go.transform.SetParent(this.transform, true);
+                            selectionObjects.Add(go);
+                        }
                     }
                 }
             }
-        }
 
-        
-        if (Input.GetMouseButtonUp(0)) {
-            InteractWithTiles(start, end);
-        }
 
+            if (Input.GetMouseButtonUp(0)) {
+                InteractWithTiles(start, end);
+            }
+        }
     }
 
     void OnGUI() {

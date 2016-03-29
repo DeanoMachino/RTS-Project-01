@@ -18,8 +18,8 @@ public class QueuedObject : MonoBehaviour {
         this.world = world_;
         this.tile = tile_;
 
-        float yOffset = gameObject.GetComponent<Renderer>().bounds.size.y / 2;
-        gameObject.transform.position = new Vector3(tile.positionV3.x, tile.positionV3.y + yOffset, tile.positionV3.z);
+        //float yOffset = gameObject.GetComponent<Renderer>().bounds.size.y / 2;
+        gameObject.transform.position = new Vector3(tile.positionV3.x, tile.positionV3.y, tile.positionV3.z);
 
         gameObject.GetComponent<Renderer>().material.color = new Color(0f, 0f, 0.7f, 0.5f);
     }

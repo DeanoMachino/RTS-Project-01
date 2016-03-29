@@ -115,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionMode: 0
   tile: {fileID: 156970, guid: 35aeb676152aa9a469ce1ff47df98b82, type: 2}
-  wall: {fileID: 156970, guid: 2f83e7ee0505efb4697849f64a9b90f6, type: 2}
+  wall: {fileID: 198188, guid: 1bad39025cad074489a50aeeb6a7eb24, type: 2}
   buildIndicator: {fileID: 145178, guid: 465bcb6f2a658f7408c5451086157500, type: 2}
 --- !u!4 &93198654
 Transform:
@@ -128,7 +128,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!114 &93198655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,8 +140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9864c0290d8cd42848d4bb7b013466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 10
-  zoomSpeed: 1000
+  cameraParent: {fileID: 2088564488}
+  keyPanSensitivity: 0.3
+  mousePanSensitivity: 0.05
+  zoomSensitivity: 20
+  mouseRotationSensitivity: 1
+  keyRotationSensitivity: 2
+  cameraAngle: 45
 --- !u!1 &105191355
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,11 +227,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 105191355}
-  m_LocalRotation: {x: 0.5735765, y: 0, z: 0, w: 0.819152}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2088564489}
   m_RootOrder: 0
 --- !u!1 &735748270
 GameObject:
@@ -287,5 +292,33 @@ Transform:
   m_LocalPosition: {x: -14.91, y: 4.52, z: -6.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+--- !u!1 &2088564488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2088564489}
+  m_Layer: 0
+  m_Name: CameraParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2088564489
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2088564488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 105191360}
   m_Father: {fileID: 0}
   m_RootOrder: 2
